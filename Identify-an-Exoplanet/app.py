@@ -79,8 +79,14 @@ with st.expander("📥 Data"):
     else:
         st.warning("No CSV uploaded yet.")
 
-# Sidebar controls
 
+feature_cols = []
+if df is not None:
+    feature_cols = [c for c in DEFAULT_FEATURES if c in df.columns]
+
+# Sidebar controls
+with st.sidebar:
+    st.header("⚙️ Settings")
     # Cleaning
     st.subheader("Outliers")
     use_sigma = st.checkbox("Sigma filter (z-score)", value=True)
