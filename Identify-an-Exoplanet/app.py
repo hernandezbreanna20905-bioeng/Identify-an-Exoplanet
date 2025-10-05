@@ -173,7 +173,7 @@ if df is not None and feature_cols and TARGET_COL in df.columns: #feature_col=li
 
         # Detailed report
         y_pred = clf.predict(X_test)
-        report = classification_report(y_test, y_pred, target_names=TARGET_NAMES, output_dict=True)
+        report = classification_report(y_test, y_pred, target_names=TARGET_NAMES, output_dict=True)  ###shows models performance
         st.write("**Classification report**")
         st.dataframe(pd.DataFrame(report).T)
 
@@ -206,7 +206,7 @@ if df is not None and feature_cols and TARGET_COL in df.columns: #feature_col=li
 
         # Scale and predict
         sample_scaled = scaler.transform(sample)
-        proba = clf.predict_proba(sample_scaled)[0]
+        proba = clf.predict_proba(sample_scaled)[0]   ###models confidence
         pred_class = np.argmax(proba)
         st.subheader("Prediction")
         st.write(dict(zip(TARGET_NAMES, map(lambda x: round(float(x), 4), proba))))
