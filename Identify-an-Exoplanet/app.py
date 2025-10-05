@@ -20,8 +20,8 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report, confusion_matrix, ConfusionMatrixDisplay
 
-st.set_page_config(page_title="Kepler Exoplanet Classifier", page_icon="🪐", layout="wide")
-st.title("🪐 Kepler Exoplanet Classifier (Tabular)")
+st.set_page_config(page_title="Kepler Exoplanet Identifier", page_icon="🪐", layout="wide")
+st.title("🪐 Kepler Exoplanet Identifier")
 
 st.info("Upload Kepler KOI tabular data, clean outliers (sigma/IQR), train a Random Forest, and predict disposition.")
 
@@ -31,13 +31,6 @@ st.info("Upload Kepler KOI tabular data, clean outliers (sigma/IQR), train a Ran
 DEFAULT_FEATURES = [
     # Transit geometry
     "koi_period", "koi_duration", "koi_depth", "koi_prad",
-    "koi_ror", "koi_impact", "koi_dor",
-    # Stellar + signal
-    "koi_snr", "koi_teq", "koi_insol",
-    "koi_sradius", "koi_smass", "koi_slogg", "koi_smet",
-    "koi_kepmag",
-    # False positive flags
-    "koi_fpflag_nt", "koi_fpflag_ss", "koi_fpflag_co",
 ]
 
 TARGET_COL = "koi_disposition"
@@ -87,21 +80,6 @@ with st.expander("📥 Data"):
         st.warning("No CSV uploaded yet.")
 
 # Sidebar controls
-with st.sidebar:
-    st.header("⚙️ Settings")
-    st.caption("Model & preprocessing")
-
-    # Feature selection
-    st.subheader("Features")
-    if df is not None:
-        candidate_cols = [c for c in DEFAULT_FEATURES if c in df.columns]
-        if not candidate_cols:
-            st.error("None of the default feature columns were found in your CSV.")
-            feature_cols = []
-        else:
-            feature_cols = st.multiselect("Select features", options=candidate_cols, default=candidate_cols)
-    else:
-        feature_cols = []
 
     # Cleaning
     st.subheader("Outliers")
@@ -123,7 +101,7 @@ with st.sidebar:
 # -------------------------
 # Data preparation & model
 # -------------------------
-if df is not None and feature_cols and TARGET_COL in df.columns:
+if df is not None and feature_cols and TARGET_COL in df.columns: #feature_col=list of column names
     with st.expander("🧹 Data preparation"):
         # Clean column names
         df.columns = df.columns.str.strip()
@@ -192,20 +170,6 @@ if df is not None and feature_cols and TARGET_COL in df.columns:
         report = classification_report(y_test, y_pred, target_names=TARGET_NAMES, output_dict=True)
         st.write("**Classification report**")
         st.dataframe(pd.DataFrame(report).T)
-
-        # Confusion matrix
-        st.write("**Confusion matrix**")
-        fig, ax = plt.subplots(figsize=(5,4))
-        cm = confusion_matrix(y_test, y_pred)
-        disp = ConfusionMatrixDisplay(cm, display_labels=TARGET_NAMES)
-        disp.plot(ax=ax, cmap="Blues", colorbar=False)
-        st.pyplot(fig)
-
-        # Feature importances
-        if hasattr(clf, "feature_importances_"):
-            st.write("**Feature importance**")
-            importances = pd.Series(clf.feature_importances_, index=feature_cols).sort_values(ascending=False)
-            st.bar_chart(importances)
 
     # -------------------------
     # Inference UI (single prediction)
