@@ -30,8 +30,7 @@ st.info("Upload Kepler KOI tabular data, clean outliers (sigma/IQR), train a Ran
 # -------------------------
 DEFAULT_FEATURES = [
     # Transit geometry
-    "koi_period", "koi_duration", "koi_depth", "koi_prad",
-]
+    "koi_period", "koi_duration", "koi_depth", "koi_prad", "koi_model_snr", "koi_impact"]
 
 TARGET_COL = "koi_disposition"
 TARGET_MAP = {"FALSE POSITIVE": 0, "CANDIDATE": 1, "CONFIRMED": 2}
